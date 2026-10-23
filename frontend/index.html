@@ -1,45 +1,113 @@
-<!doctype html>
+
+<!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Ingestion Firewall</title>
-  <link rel="stylesheet" href="style.css">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#ffffff" />
+    <title>AI Assistant</title>
+    <link rel="stylesheet" href="style.css" />
+
+    <!-- Markdown rendering and HTML sanitization -->
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/dompurify@3.2.6/dist/purify.min.js"></script>
 </head>
 <body>
-  <main class="page">
-    <header class="hero">
-      <div class="eyebrow">AI · STRUCTURED DATA · VALIDATION</div>
-      <h1>Enterprise Ingestion Firewall</h1>
-      <p>Enter any message. The AI classifies its intent and returns data validated against a Pydantic schema.</p>
-    </header>
+    <div class="app">
+        <aside class="sidebar">
+            <div class="brand">
+                <div class="brand-icon">✦</div>
+                <div>
+                    <h2>AI Assistant</h2>
+                    <p>Get help with your queries</p>
+                </div>
+            </div>
 
-    <section class="panel">
-      <label for="message">Your message</label>
-      <textarea id="message" rows="5" maxlength="5000" placeholder="Try: Hi there!&#10;Or: Where is my order?&#10;Or: My payment was deducted twice."></textarea>
-      <div class="examples">
-        <button type="button" class="example" data-message="Hi, good morning!">Greeting</button>
-        <button type="button" class="example" data-message="Where is my order?">Order tracking</button>
-        <button type="button" class="example" data-message="My payment was deducted twice. Please help urgently.">Payment issue</button>
-        <button type="button" class="example" data-message="What time is it now?">Current time</button>
-      </div>
-      <button id="submit" class="primary">Analyze message <span aria-hidden="true">→</span></button>
-<p id="status" class="status" role="status">Backend: http://localhost:8080</p>
-    </section>
+            <button id="new-chat" class="new-chat" type="button">
+                ＋ New Chat
+            </button>
 
-    <section class="panel result-panel">
-      <div class="result-heading">
-        <div>
-          <div class="eyebrow">RESPONSE</div>
-          <h2>Validated JSON</h2>
-        </div>
-        <button id="copy" class="secondary" disabled>Copy JSON</button>
-      </div>
-      <pre id="result"><code>Your structured result will appear here.</code></pre>
-      <p class="footnote">This demo classifies messages only. It does not actually retrieve orders or the current time. Token counts are estimates, not billing records.</p>
-    </section>
-<footer>Built with Java · Spring Boot · Spring AI · Groq</footer>
-  </main>
-  <script src="script.js"></script>
+            <div class="sidebar-section">
+                <h3>Suggested Prompts</h3>
+
+                <button class="suggestion" type="button">
+                    My payment was deducted twice. What should I do?
+                </button>
+                <button class="suggestion" type="button">
+                    How can I reset my password?
+                </button>
+                <button class="suggestion" type="button">
+                    I want to check my order status.
+                </button>
+                <button class="suggestion" type="button">
+                    What are your refund policies?
+                </button>
+                <button class="suggestion" type="button">
+                    How do I contact customer support?
+                </button>
+            </div>
+
+            <div class="backend-status">
+                <span id="status-dot" class="status-dot"></span>
+                <div>
+                    <strong id="backend-status">Checking backend...</strong>
+                    <p>Java Spring Boot + Groq</p>
+                </div>
+            </div>
+        </aside>
+
+        <main class="chat-panel">
+            <header class="chat-header">
+                <h2 id="chat-title">New Chat</h2>
+            </header>
+
+            <section
+                id="chat-messages"
+                class="chat-messages"
+                aria-live="polite"
+                aria-label="Chat messages"
+            >
+                <div id="welcome" class="welcome">
+                    <div class="welcome-icon">✦</div>
+                    <h1>How can I help you?</h1>
+                    <p>Ask a question to get started.</p>
+                </div>
+            </section>
+
+            <div
+                id="error-message"
+                class="error-message"
+                role="alert"
+                hidden
+            ></div>
+
+            <form id="chat-form" class="chat-form">
+                <textarea
+                    id="message-input"
+                    placeholder="Type your message..."
+                    rows="1"
+                    maxlength="5000"
+                    aria-label="Your message"
+                    required
+                ></textarea>
+
+                <button
+                    id="send-button"
+                    type="submit"
+                    aria-label="Send message"
+                    title="Send message"
+                >
+                    ➤
+                </button>
+            </form>
+
+            <p class="disclaimer">
+                AI-generated responses may not always be accurate.
+                Press Enter to send, or Shift + Enter for a new line.
+            </p>
+        </main>
+    </div>
+
+    <script src="script.js"></script>
 </body>
 </html>
