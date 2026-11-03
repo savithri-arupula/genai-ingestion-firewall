@@ -9,6 +9,7 @@ public class IngestionResult {
     private boolean requires_action;
     private String summary;
     private TokenMetadata token_metadata = new TokenMetadata();
+    private String session_id;
     private String response_markdown;
 
     public IngestionResult() {
@@ -60,6 +61,14 @@ public class IngestionResult {
 
     public void setToken_metadata(TokenMetadata token_metadata) {
         this.token_metadata = token_metadata;
+    }
+
+    public String getSession_id() {
+        return session_id;
+    }
+
+    public void setSession_id(String session_id) {
+        this.session_id = session_id;
     }
 
     public String getResponse_markdown() {

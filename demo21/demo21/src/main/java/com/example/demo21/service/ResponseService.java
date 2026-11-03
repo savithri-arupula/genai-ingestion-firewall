@@ -5,6 +5,9 @@ import com.example.demo21.dto.IngestionResult;
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+import java.util.Map;
+
 @Service
 public class ResponseService {
 
@@ -33,7 +36,16 @@ public class ResponseService {
         this.chatClient = builder.build();
     }
 
+    // Existing method remains available.
     public String generateResponse(IngestionResult result) {
+        return generateResponse(result, List.of(), null);
+    }
+
+    // New method supports conversation history.
+    public String generateResponse(
+            IngestionResult result,
+            List<Map<String, String>> history,
+            String currentMessage) {
 
         String intentContext = """
             Intent: %s
@@ -49,14 +61,34 @@ public class ResponseService {
                 result.isRequires_action()
             );
 
+        StringBuilder conversation = new StringBuilder();
+
+        for (Map<String, String> item : history) {
+            conversation.append(item.get("role"))
+                    .append(": ")
+                    .append(item.get("content"))
+                    .append("\n");
+        }
+
         String answer = chatClient.prompt()
                 .system(RESPONSE_SYSTEM_PROMPT)
                 .user("""
-                    Create a helpful Markdown response using
-                    this intent analysis:
-
+                    Intent analysis:
                     %s
-                    """.formatted(intentContext))
+
+                    Previous conversation:
+                    %s
+
+                    Current user message:
+                    %s
+
+                    Answer the current user while using relevant
+                    conversation history for context.
+                    """.formatted(
+                        intentContext,
+                        conversation,
+                        currentMessage == null ? "" : currentMessage
+                    ))
                 .call()
                 .content();
 
