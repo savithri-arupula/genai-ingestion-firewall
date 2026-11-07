@@ -1,4 +1,6 @@
-const BASE_URL = "http://localhost:8080";
+
+const BASE_URL = "https://genai-ingestion-firewall-1.onrender.com";
+
 async function request(path, options = {}) {
   let response;
 
@@ -11,7 +13,7 @@ async function request(path, options = {}) {
     });
   } catch {
     throw new Error(
-      "Cannot reach the backend. Is Spring Boot running on port 8080?"
+      "Cannot reach the backend. Please check your internet connection or backend deployment."
     );
   }
 
