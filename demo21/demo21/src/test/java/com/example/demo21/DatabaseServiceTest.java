@@ -1,13 +1,10 @@
-
 package com.example.demo21;
 
 import com.example.demo21.service.DatabaseService;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.io.TempDir;
 
-import java.nio.file.Path;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -18,13 +15,21 @@ class DatabaseServiceTest {
 
     private DatabaseService db;
 
-    @TempDir
-    Path tempDir;
-
     @BeforeEach
     void setUp() {
-        // Create a separate database for each test.
-        db = new DatabaseService(tempDir.resolve("test.db"));
+        String jdbcUrl = System.getenv("NEON_TEST_DATABASE_URL");
+        String username = System.getenv("NEON_TEST_DATABASE_USERNAME");
+        String password = System.getenv("NEON_TEST_DATABASE_PASSWORD");
+
+        if (jdbcUrl == null || username == null || password == null) {
+            throw new IllegalStateException(
+                    "Configure NEON_TEST_DATABASE_URL, "
+                    + "NEON_TEST_DATABASE_USERNAME, and "
+                    + "NEON_TEST_DATABASE_PASSWORD"
+            );
+        }
+
+        db = new DatabaseService(jdbcUrl, username, password);
         db.initializeDatabase();
     }
 
@@ -108,11 +113,18 @@ class DatabaseServiceTest {
         List<Map<String, String>> conversations =
                 db.listConversations();
 
-        assertEquals(1, conversations.size());
+        assertTrue(
+                conversations.stream().anyMatch(
+                        conversation ->
+                                sessionId.equals(conversation.get("session_id"))
+                )
+        );
 
-        Map<String, String> conversation = conversations.get(0);
-
-        assertEquals(sessionId, conversation.get("session_id"));
+        Map<String, String> conversation =
+                conversations.stream()
+                        .filter(c -> sessionId.equals(c.get("session_id")))
+                        .findFirst()
+                        .orElseThrow();
 
         assertEquals(
                 "My payment was deducted twice",
