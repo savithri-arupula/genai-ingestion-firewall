@@ -10,6 +10,8 @@ import com.example.demo21.service.TokenCounterService;
 
 import jakarta.validation.Valid;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
@@ -20,6 +22,9 @@ import java.util.UUID;
 
 @RestController
 public class IngestionController {
+
+    private static final Logger log =
+            LoggerFactory.getLogger(IngestionController.class);
 
     private final LlmService llmService;
     private final ResponseService responseService;
@@ -44,7 +49,7 @@ public class IngestionController {
         return Map.of(
                 "status", "ok",
                 "message", "Ingestion Firewall API is running",
-                "database", "sqlite"
+                "database", "postgresql"
         );
     }
 
@@ -147,9 +152,12 @@ public class IngestionController {
             return result;
 
         } catch (ResponseStatusException ex) {
+            log.error("Request failed in /api/analyze: {}", ex.getReason(), ex);
             throw ex;
 
         } catch (Exception ex) {
+            log.error("Unexpected error in /api/analyze", ex);
+
             throw new ResponseStatusException(
                     HttpStatus.BAD_GATEWAY,
                     "LLM request failed. Check the API key, model name, "
